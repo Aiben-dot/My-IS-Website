@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Clone - Stock Tickers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #333;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 60px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .tile {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            background-color: white;
+        }
+        .tile.correct {
+            background-color: #6aaa64; /* Green */
+            color: white;
+        }
+        .tile.present {
+            background-color: #c9b458; /* Yellow */
+            color: white;
+        }
+        .tile.absent {
+            background-color: #787c7e; /* Gray */
+            color: white;
+        }
+        input {
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 1.2rem;
+            width: 200px;
+            text-transform: uppercase;
+        }
+        button {
+            padding: 10px;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Links -->
+    <div class="nav-links" style="background-color: #f4f4f4; padding: 10px; text-align: center;">
+        <a href="index.html" style="margin-right: 20px; text-decoration: none; color: #333; font-weight: bold;">Home</a>
+        <a href="resume.html" style="margin-right: 20px; text-decoration: none; color: #333; font-weight: bold;">Resume</a>
+        <a href="scratch.html" style="margin-right: 20px; text-decoration: none; color: #333; font-weight: bold;">Swing Trading</a>
+    </div>
+    <h1>Wordle Clone - Stock Tickers</h1>
+    <div id="grid" class="grid"></div>
+    <input type="text" id="guess-input" maxlength="4" placeholder="Enter a 4-character ticker">
+    <button onclick="submitGuess()">Submit</button>
+    <div id="message"></div>
+
+    <script>
+        const secretTickers = ["AAPL", "GOOG", "AMZN", "MSFT", "TSLA", "NFLX", "INTC", "CSCO", "AMD", "NVDA", "VZ", "BABA", "PYPL", "SNAP"]; // List of 5-character stock ticker symbols
+        const maxGuesses = 6;       // Maximum number of guesses
+        let currentGuess = 0;       // Track current guess row
+
+        const grid = document.getElementById("grid");
+        const message = document.getElementById("message");
+        const input = document.getElementById("guess-input");
+
+        // Initialize grid with empty tiles
+        for (let i = 0; i < maxGuesses * 4; i++) {
+            const tile = document.createElement("div");
+            tile.className = "tile";
+            grid.appendChild(tile);
+        }
+
+        function submitGuess() {
+            const guess = input.value.toUpperCase(); // Make sure ticker is in uppercase
+            if (guess.length !== 4) {
+                message.innerText = "Ticker must be 4 characters!";
+                return;
+            }
+
+            const startIndex = currentGuess * 4;
+            const tiles = document.getElementsByClassName("tile");
+
+            // Check the guess
+            for (let i = 0; i < 4; i++) {
+                tiles[startIndex + i].innerText = guess[i];
+                if (guess[i] === secretTickers[currentGuess][i]) {
+                    tiles[startIndex + i].classList.add("correct");
+                } else if (secretTickers[currentGuess].includes(guess[i])) {
+                    tiles[startIndex + i].classList.add("present");
+                } else {
+                    tiles[startIndex + i].classList.add("absent");
+                }
+            }
+
+            // Check for win or end game
+            if (guess === secretTickers[currentGuess]) {
+                message.innerText = `Congratulations! You guessed the ticker "${guess}".`;
+                input.disabled = true;
+                return;
+            }
+
+            currentGuess++;
+            input.value = "";
+
+            if (currentGuess >= maxGuesses) {
+                message.innerText = `Game Over! The ticker was "${secretTickers[currentGuess - 1]}".`;
+                input.disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>
